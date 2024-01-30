@@ -4,5 +4,14 @@ Content-Type: application/json
 {
     "name": "sensor 14",
     "location_id":12
-
 }
+
+###
+
+POST http://127.0.0.1:8000/api/devices/sensor-1/set-location/
+Content-Type: application/json
+
+{
+    "location_id":3
+}
+
