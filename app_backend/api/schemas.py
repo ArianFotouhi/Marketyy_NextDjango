@@ -1,4 +1,4 @@
-from ninja import ModelSchema
+from ninja import ModelSchema, Schema
 from api.models import Device, Location
 
 class LocationSchema(ModelSchema):
@@ -15,3 +15,11 @@ class DeviceSchema(ModelSchema):
         model = Device
         fields = ('id', 'name', 'slug', 'location')
 
+class DeviceCreateSchema(Schema):
+    name: str
+    location_id: int | None = None
+
+
+
+class Error(Schema):
+    message: str
