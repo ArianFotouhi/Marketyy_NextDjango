@@ -2,7 +2,7 @@ import Link from 'next/link'
 
 async function getDevices() {
     const endpoint = 'http://127.0.0.1:8000/api/devices/'
-    const res = await fetch(endpoint)
+    const res = await fetch(endpoint, {cache: 'no-store'})
 
     if (!res.ok) {
         // This will activate the closest `error.js` Error Boundary
