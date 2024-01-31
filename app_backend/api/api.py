@@ -52,14 +52,18 @@ class DeviceController:
         device.save()
         return device
 
-
-@app.get("locations/", response=list[LocationSchema])
-def get_locations(request):
-    return Location.objects.all()
-
-
-
+@api_controller('/locations', tags= ['Locations'], permissions=[])
+class LocationController:
+    @route.get("/", response=list[LocationSchema])
+    def get_locations(self):
+        return Location.objects.all()
 
 
 
-app.register_controllers(DeviceController)
+
+
+
+app.register_controllers(
+    DeviceController,
+    LocationController
+                         )
