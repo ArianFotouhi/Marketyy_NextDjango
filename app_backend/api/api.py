@@ -14,11 +14,11 @@ from api.schemas import (
     LoginSchema,
     TokenSchema
 )
+from .utils.token_util import generate_jwt_token
 from django.shortcuts import get_object_or_404
 
 from ninja.security import HttpBearer
 from django.contrib.auth import authenticate
-from jose import jwt
 
 
         
@@ -94,20 +94,6 @@ class AuthController:
 
 
 
-def generate_jwt_token(user):
-    from datetime import datetime, timedelta
 
-    expiration_time = datetime.utcnow() + timedelta(days=1)
-
-    # Create the JWT payload
-    payload = {
-        'user_id': user.id,
-        'exp': expiration_time,
-    }
-
-    # Use Django's SECRET_KEY for JWT signing
-    token = jwt.encode(payload, 'your-secret-key', algorithm='HS256')
-
-    return token
 
 app.register_controllers(DeviceController, LocationController, AuthController)
