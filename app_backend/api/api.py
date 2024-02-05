@@ -11,10 +11,14 @@ from api.schemas import (
     DeviceCreateSchema,
     Error,
     DeviceLocationPatch,
+    LoginSchema,
+    TokenSchema
 )
 from django.shortcuts import get_object_or_404
 
 from ninja.security import HttpBearer
+from django.contrib.auth import authenticate
+from jose import jwt
 
 
         
@@ -25,7 +29,7 @@ class AuthBearer(HttpBearer):
         if token == "supersecret":
             return token
         
-        
+
 @api_controller("/devices", tags=["Devices"], auth=AuthBearer())
 class DeviceController:
 
@@ -70,4 +74,40 @@ class LocationController:
         return Location.objects.all()
 
 
-app.register_controllers(DeviceController, LocationController)
+
+@api_controller("/auth", tags=["Login"])
+class AuthController:
+
+    @route.post("/login/", response={200: TokenSchema, 401: Error})
+    def login(self, request, device: LoginSchema):
+        username = device.username
+        password = device.password
+        user = authenticate(request, username=username, password=password)
+
+        if user:
+            # Generate JWT token using a secure function
+            token = generate_jwt_token(user)
+   
+            return 200, {"token": token, 'user':str(user)}
+        else:
+            return 401, {"message": "Invalid username or password"}
+
+
+
+def generate_jwt_token(user):
+    from datetime import datetime, timedelta
+
+    expiration_time = datetime.utcnow() + timedelta(days=1)
+
+    # Create the JWT payload
+    payload = {
+        'user_id': user.id,
+        'exp': expiration_time,
+    }
+
+    # Use Django's SECRET_KEY for JWT signing
+    token = jwt.encode(payload, 'your-secret-key', algorithm='HS256')
+
+    return token
+
+app.register_controllers(DeviceController, LocationController, AuthController)

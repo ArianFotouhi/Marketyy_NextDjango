@@ -27,3 +27,10 @@ class Error(Schema):
 class DeviceLocationPatch(Schema):
     location_id: int | None = None
 
+class LoginSchema(Schema):
+    username: str
+    password: str
+
+class TokenSchema(Schema):
+    token: str
+    user: str
