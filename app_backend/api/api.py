@@ -1,7 +1,6 @@
 from ninja_extra import (NinjaExtraAPI, 
                          api_controller, 
                          route, 
-                         permissions,
                          )
 
 from api.models import Device, Location
@@ -30,7 +29,8 @@ class AuthBearer(HttpBearer):
             return token
         
 
-@api_controller("/devices", tags=["Devices"], auth=AuthBearer())
+# @api_controller("/devices", tags=["Devices"], auth=AuthBearer())
+@api_controller("/devices", tags=["Devices"])
 class DeviceController:
 
     @route.get("/", response=list[DeviceSchema])
