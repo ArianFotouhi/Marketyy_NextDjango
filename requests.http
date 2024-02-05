@@ -1,9 +1,10 @@
 POST http://127.0.0.1:8000/api/devices/
 Content-Type: application/json
+Authorization: Bearer supersecret
 
 {
-    "name": "sensor 14",
-    "location_id":12
+    "name": "sensor 9",
+    "location_id": 3
 }
 
 ###

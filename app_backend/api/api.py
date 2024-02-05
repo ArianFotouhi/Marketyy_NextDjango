@@ -14,11 +14,19 @@ from api.schemas import (
 )
 from django.shortcuts import get_object_or_404
 
+from ninja.security import HttpBearer
 
+
+        
 app = NinjaExtraAPI()
 
-
-@api_controller("/devices", tags=["Devices"], permissions=[permissions.IsAuthenticatedOrReadOnly])
+class AuthBearer(HttpBearer):
+    def authenticate(self, request, token):
+        if token == "supersecret":
+            return token
+        
+        
+@api_controller("/devices", tags=["Devices"], auth=AuthBearer())
 class DeviceController:
 
     @route.get("/", response=list[DeviceSchema])
