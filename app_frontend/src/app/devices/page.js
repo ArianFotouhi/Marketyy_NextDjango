@@ -1,5 +1,8 @@
+"use client"
+
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation'
 
 async function getDevices() {
     // Retrieve the token from localStorage
@@ -34,12 +37,22 @@ async function getDevices() {
 }
 
 export default async function Devices() {
+    const router = useRouter()
+
     const devices = await getDevices()
+    function handleSignOut () {
+        console.log('aaa');        
+        localStorage.removeItem('token');
+        // redirect('/login');
+        router.push('/login')
+
+          }
 
     return (
         
         <div className="flex flex-col items-center mt-2">
-        
+        <button className="btn btn-secondary mt-4" onClick={handleSignOut}>Sign Out</button>
+
             <h1 className="text-4xl">My Devices</h1>
             
             <div className="mt-5 flex flex-col gap-2">

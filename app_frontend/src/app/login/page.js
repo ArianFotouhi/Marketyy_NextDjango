@@ -2,8 +2,10 @@
 import './styles/styles.css';
 import React, { useState, useEffect } from 'react';
 import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation'
 
 export default function LoginPage() {
+    const router = useRouter()
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -34,7 +36,9 @@ export default function LoginPage() {
             localStorage.setItem('token', token);
 
             // Redirect to the /devices route
-            redirect('/devices');
+            // redirect('/devices');
+            router.push('/devices')
+
         } catch (error) {
             console.error('Login error:', error.message);
             setError('Failed to log in');

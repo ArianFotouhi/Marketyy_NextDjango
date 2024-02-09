@@ -43,7 +43,7 @@ class AuthController:
     def login(self, request, device: LoginSchema):
         username = device.username
         password = device.password
-        user = authenticate(request, username=username, password=password)
+        user = authenticate(request, username= username, password= password)
 
         if user:
             # Generate JWT token using a secure function
