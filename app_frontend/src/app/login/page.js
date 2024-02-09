@@ -1,6 +1,7 @@
 "use client"
 import './styles/styles.css';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { redirect } from 'next/navigation';
 
 export default function LoginPage() {
 
@@ -8,6 +9,7 @@ export default function LoginPage() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
+    // Function to handle login
     const handleLogin = async (e) => {
         e.preventDefault();
 
@@ -24,17 +26,29 @@ export default function LoginPage() {
                 throw new Error('Login failed');
             }
 
-            // Assuming the response is a string
-            const data = await response.text();
-            console.log('Login response:', data);
+            // Assuming the response is a JSON object containing the token
+            const data = await response.json();
+            const token = data.token;
 
-            // Redirect to dashboard or handle the response as needed
-            // router.push('/devices');
+            // Store the token in localStorage for future use
+            localStorage.setItem('token', token);
+
+            // Redirect to the /devices route
+            redirect('/devices');
         } catch (error) {
             console.error('Login error:', error.message);
             setError('Failed to log in');
         }
     };
+
+    // Effect to check if the user is already logged in
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            // Redirect to the /devices route if the user is already logged in
+            redirect('/devices');
+        }
+    }, []);
 
     return (
         <div className="login-container">
