@@ -33,4 +33,3 @@ class LoginSchema(Schema):
 
 class TokenSchema(Schema):
     token: str
-    user: str

@@ -1,7 +1,8 @@
-from ninja_extra import (NinjaExtraAPI, 
-                         api_controller, 
-                         route, 
-                         )
+from ninja_extra import (
+    NinjaExtraAPI, 
+    api_controller, 
+    route, 
+)
 
 from api.models import Device, Location
 from api.schemas import (
@@ -13,12 +14,15 @@ from api.schemas import (
     LoginSchema,
     TokenSchema
 )
+
 from .utils.token_util import generate_jwt_token
 from django.shortcuts import get_object_or_404
 
 from ninja.security import HttpBearer
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login
 
+from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
 
         
 app = NinjaExtraAPI()
@@ -28,9 +32,52 @@ class AuthBearer(HttpBearer):
         if token == "supersecret":
             return token
         
+        
+        
 
-# @api_controller("/devices", tags=["Devices"], auth=AuthBearer())
-@api_controller("/devices", tags=["Devices"])
+
+@api_controller("/", tags=["Authentication"])
+class AuthController:
+
+    @route.post("/login/", response={200: TokenSchema, 401: Error})
+    def login(self, request, device: LoginSchema):
+        username = device.username
+        password = device.password
+        user = authenticate(request, username=username, password=password)
+
+        if user:
+            # Generate JWT token using a secure function
+            token = generate_jwt_token(user)
+   
+            return 200, {"token": token}
+        else:
+            return 401, {"message": "Invalid username or password"}
+        
+    
+    @route.post("/signup/", response={200: TokenSchema, 401: Error})
+    def signup(self, request, device: LoginSchema):
+        username = device.username
+        password = device.password
+
+        # Check if user already exists
+        if User.objects.filter(username=username).exists():
+            return 401, {"message": "Username already exists"}
+
+        # Create user
+        user = User.objects.create(username=username, password=make_password(password))
+        user.save()
+
+        # Log the user in
+        login(request, user)
+
+        # Generate JWT token using a secure function
+        token = generate_jwt_token(user)
+
+        return 200, {"token": token}
+        
+
+# @api_controller("/devices", tags=["Devices"])
+@api_controller("/devices", tags=["Devices"], auth=AuthBearer())
 class DeviceController:
 
     @route.get("/", response=list[DeviceSchema])
@@ -67,6 +114,8 @@ class DeviceController:
         return device
 
 
+
+
 @api_controller("/locations", tags=["Locations"], permissions=[])
 class LocationController:
     @route.get("/", response=list[LocationSchema])
@@ -75,25 +124,7 @@ class LocationController:
 
 
 
-@api_controller("/auth", tags=["Login"])
-class AuthController:
-
-    @route.post("/login/", response={200: TokenSchema, 401: Error})
-    def login(self, request, device: LoginSchema):
-        username = device.username
-        password = device.password
-        user = authenticate(request, username=username, password=password)
-
-        if user:
-            # Generate JWT token using a secure function
-            token = generate_jwt_token(user)
-   
-            return 200, {"token": token, 'user':str(user)}
-        else:
-            return 401, {"message": "Invalid username or password"}
 
 
 
-
-
-app.register_controllers(DeviceController, LocationController, AuthController)
+app.register_controllers(AuthController, DeviceController, LocationController)

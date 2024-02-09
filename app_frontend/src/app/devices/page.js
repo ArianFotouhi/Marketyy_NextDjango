@@ -1,15 +1,20 @@
+"use client";
+
 import Link from 'next/link'
+import {redirect} from 'next/navigation';
 
 async function getDevices() {
-    const endpoint = 'http://127.0.0.1:8000/api/devices/'
-    const res = await fetch(endpoint, {cache: 'no-store'})
+
+    const endpoint = 'http://127.0.0.1:8000/api/devices/';
+    const res = await fetch(endpoint, { cache: 'no-store' });
 
     if (!res.ok) {
-        // This will activate the closest `error.js` Error Boundary
-        throw new Error('Failed to fetch data with code ${res.status}')
+        // Redirect to the login page if response code is not 200
+        redirect('/login');        
+        // throw new Error(`Failed to fetch data with code ${res.status}`);
     }
 
-    return res.json()
+    return res.json();
 }
 
 export default async function Devices() {
