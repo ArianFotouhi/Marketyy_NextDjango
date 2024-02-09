@@ -1,7 +1,7 @@
 "use client"
 import './styles/styles.css';
 import React, { useState, useEffect } from 'react';
-import { redirect } from 'next/navigation';
+// import { redirect } from 'next/navigation';
 import { useRouter } from 'next/navigation'
 
 export default function LoginPage() {
@@ -50,13 +50,14 @@ export default function LoginPage() {
         const token = localStorage.getItem('token');
         if (token) {
             // Redirect to the /devices route if the user is already logged in
-            redirect('/devices');
+            router.push('/devices')
         }
     }, []);
 
     return (
         <div className="login-container">
             <h2>Login Page</h2>
+            <div className='form-holder'>
             <form onSubmit={handleLogin}>
                 <div className="form-group">
                     <label>Username</label>
@@ -79,6 +80,8 @@ export default function LoginPage() {
                 {error && <div className="error-message">{error}</div>}
                 <button type="submit">Login</button>
             </form>
+            </div>
+
         </div>
     );
 }

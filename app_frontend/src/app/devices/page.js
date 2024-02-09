@@ -1,16 +1,18 @@
 "use client"
 
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
+// import { redirect } from 'next/navigation';
 import { useRouter } from 'next/navigation'
 
 async function getDevices() {
+    const router = useRouter()
+
     // Retrieve the token from localStorage
     // const token = localStorage.getItem('token');
     const token = 'supersecret';
     // If token is not available, redirect to the login page
     if (!token) {
-        redirect('/login');
+        router.push('/login')
     }
 
     const endpoint = 'http://127.0.0.1:8000/api/devices/';
